@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_widgets.dart';
 
 class SessionsScreen extends StatefulWidget {
   const SessionsScreen({super.key});
@@ -33,9 +35,6 @@ class _SessionsScreenState extends State<SessionsScreen>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('SESSIONI'),
@@ -55,19 +54,22 @@ class _SessionsScreenState extends State<SessionsScreen>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: selected
-                            ? AppColors.accent
-                            : isDark
-                                ? AppColors.darkSurface
-                                : AppColors.lightSurface,
+                        gradient: selected
+                            ? const LinearGradient(colors: AppColors.accentGradient)
+                            : null,
+                        color: selected ? null : AppColors.glassSurface,
                         borderRadius: BorderRadius.circular(999),
-                        border: Border.all(
-                          color: selected
-                              ? AppColors.accent
-                              : isDark
-                                  ? AppColors.darkBorder
-                                  : AppColors.lightBorder,
-                        ),
+                        border: selected
+                            ? null
+                            : Border.all(color: AppColors.glassBorderSubtle, width: 0.5),
+                        boxShadow: selected
+                            ? [
+                                BoxShadow(
+                                  color: AppColors.accent.withValues(alpha: 0.3),
+                                  blurRadius: 12,
+                                ),
+                              ]
+                            : null,
                       ),
                       child: Text(
                         _tabs[i],
@@ -77,9 +79,7 @@ class _SessionsScreenState extends State<SessionsScreen>
                           fontWeight: FontWeight.w600,
                           color: selected
                               ? AppColors.textOnAccent
-                              : isDark
-                                  ? AppColors.darkTextSecondary
-                                  : AppColors.lightTextSecondary,
+                              : AppColors.darkTextSecondary,
                         ),
                       ),
                     ),
@@ -112,7 +112,6 @@ class _SessionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: sostituire con dati reali da Supabase via Riverpod
     final mockSessions = [
       _MockSession(
         id: '1',
@@ -146,16 +145,22 @@ class _SessionList extends StatelessWidget {
       ),
     ];
 
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        _DateLabel(label: 'LUN 20 FEB'),
-        const SizedBox(height: 8),
-        ...mockSessions.map((s) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: SessionCard(session: s),
-            )),
-      ],
+    return ScaffoldGradientBackground(
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          _DateLabel(label: 'LUN 20 FEB'),
+          const SizedBox(height: 8),
+          ...mockSessions.asMap().entries.map((entry) => Padding(
+                padding: const EdgeInsets.only(bottom: 16),
+                child: SessionCard(session: entry.value)
+                    .animate()
+                    .fadeIn(duration: 500.ms, delay: (entry.key * 100).ms)
+                    .slideY(begin: 0.1, end: 0),
+              )),
+          const SizedBox(height: 96),
+        ],
+      ),
     );
   }
 }
@@ -187,109 +192,78 @@ class SessionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final isFull = session.booked >= session.capacity;
     final fillRatio = session.booked / session.capacity;
 
-    return GestureDetector(
+    return GlowCard(
       onTap: () => context.go('/sessions/${session.id}'),
-      child: Container(
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
-          ),
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    session.title,
-                    style: theme.textTheme.headlineSmall,
-                  ),
-                ),
-                _TypeBadge(type: session.type),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'Coach: ${session.coach}',
-              style: theme.textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 12),
-
-            // Details
-            Row(
-              children: [
-                const Icon(Icons.schedule_outlined, size: 14),
-                const SizedBox(width: 4),
-                Text(session.time, style: theme.textTheme.bodySmall),
-                const SizedBox(width: 16),
-                const Icon(Icons.location_on_outlined, size: 14),
-                const SizedBox(width: 4),
-                Text(session.room, style: theme.textTheme.bodySmall),
-              ],
-            ),
-            const SizedBox(height: 12),
-
-            // Progress bar
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(999),
-                  child: LinearProgressIndicator(
-                    value: fillRatio,
-                    minHeight: 6,
-                    backgroundColor: isDark
-                        ? AppColors.darkSurfaceHigh
-                        : AppColors.lightSurfaceHigh,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      isFull ? AppColors.lightTextDisabled : AppColors.accent,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  isFull
-                      ? 'COMPLETO'
-                      : '${session.booked}/${session.capacity} posti',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: isFull
-                        ? (isDark
-                            ? AppColors.darkTextDisabled
-                            : AppColors.lightTextDisabled)
-                        : fillRatio > 0.7
-                            ? AppColors.accent
-                            : null,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-
-            if (!isFull) ...[
-              const SizedBox(height: 12),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton(
-                  onPressed: () => context.go('/sessions/${session.id}'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                  ),
-                  child: const Text('PRENOTA'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  session.title,
+                  style: theme.textTheme.headlineSmall,
                 ),
               ),
+              _TypeBadge(type: session.type),
             ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'Coach: ${session.coach}',
+            style: theme.textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 12),
+
+          // Details
+          Row(
+            children: [
+              const Icon(Icons.schedule_outlined, size: 14, color: AppColors.accent),
+              const SizedBox(width: 4),
+              Text(session.time, style: theme.textTheme.bodySmall),
+              const SizedBox(width: 16),
+              const Icon(Icons.location_on_outlined, size: 14, color: AppColors.accent),
+              const SizedBox(width: 4),
+              Text(session.room, style: theme.textTheme.bodySmall),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Progress bar
+          GlowProgressBar(
+            value: fillRatio,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            isFull
+                ? 'COMPLETO'
+                : '${session.booked}/${session.capacity} posti',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: isFull
+                  ? AppColors.darkTextDisabled
+                  : fillRatio > 0.7
+                      ? AppColors.accent
+                      : null,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+
+          if (!isFull) ...[
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerRight,
+              child: GlowButton(
+                label: 'PRENOTA',
+                expand: false,
+                onPressed: () => context.go('/sessions/${session.id}'),
+              ),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }
@@ -301,12 +275,14 @@ class _TypeBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.accentTintDark : AppColors.accentTintLight,
+        color: AppColors.glassSurface,
         borderRadius: BorderRadius.circular(4),
+        border: Border.all(
+          color: AppColors.accent.withValues(alpha: 0.4),
+        ),
       ),
       child: Text(
         type,
@@ -323,7 +299,7 @@ class _TypeBadge extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Mock model (temporaneo — sarà sostituito da modelli Supabase)
+// Mock model
 // ---------------------------------------------------------------------------
 class _MockSession {
   const _MockSession({

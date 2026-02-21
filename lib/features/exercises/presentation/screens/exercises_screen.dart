@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_widgets.dart';
 
 class ExercisesScreen extends StatefulWidget {
   const ExercisesScreen({super.key});
@@ -25,80 +27,81 @@ class _ExercisesScreenState extends State<ExercisesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('ESERCIZI'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Filtri muscoli
-          SizedBox(
-            height: 48,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
-              itemCount: _muscles.length,
-              itemBuilder: (context, i) {
-                final selected = _selectedMuscle == _muscles[i];
-                return GestureDetector(
-                  onTap: () => setState(() => _selectedMuscle = _muscles[i]),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                    decoration: BoxDecoration(
-                      color: selected
-                          ? AppColors.accent
-                          : Theme.of(context).brightness == Brightness.dark
-                              ? AppColors.darkSurface
-                              : AppColors.lightSurface,
-                      borderRadius: BorderRadius.circular(999),
-                      border: Border.all(
-                        color: selected
-                            ? AppColors.accent
-                            : Theme.of(context).brightness == Brightness.dark
-                                ? AppColors.darkBorder
-                                : AppColors.lightBorder,
+      body: ScaffoldGradientBackground(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Filtri muscoli
+            SizedBox(
+              height: 48,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                itemCount: _muscles.length,
+                itemBuilder: (context, i) {
+                  final selected = _selectedMuscle == _muscles[i];
+                  return GestureDetector(
+                    onTap: () => setState(() => _selectedMuscle = _muscles[i]),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      decoration: BoxDecoration(
+                        gradient: selected
+                            ? const LinearGradient(colors: AppColors.accentGradient)
+                            : null,
+                        color: selected ? null : AppColors.glassSurface,
+                        borderRadius: BorderRadius.circular(999),
+                        border: selected
+                            ? null
+                            : Border.all(color: AppColors.glassBorderSubtle, width: 0.5),
+                        boxShadow: selected
+                            ? [
+                                BoxShadow(
+                                  color: AppColors.accent.withValues(alpha: 0.3),
+                                  blurRadius: 12,
+                                ),
+                              ]
+                            : null,
+                      ),
+                      child: Text(
+                        _muscles[i],
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: selected
+                              ? AppColors.textOnAccent
+                              : AppColors.darkTextSecondary,
+                        ),
                       ),
                     ),
-                    child: Text(
-                      _muscles[i],
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: selected
-                            ? AppColors.textOnAccent
-                            : Theme.of(context).brightness == Brightness.dark
-                                ? AppColors.darkTextSecondary
-                                : AppColors.lightTextSecondary,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          // Lista esercizi
-          Expanded(
-            child: ListView.separated(
-              padding: const EdgeInsets.all(16),
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
-              itemCount: _mockExercises.length,
-              itemBuilder: (context, i) => _ExerciseCard(
-                exercise: _mockExercises[i],
-                onTap: () => context.go('/exercises/${_mockExercises[i].id}'),
+                  );
+                },
               ),
             ),
-          ),
-        ],
+
+            const SizedBox(height: 8),
+
+            // Lista esercizi
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.all(16),
+                separatorBuilder: (_, __) => const SizedBox(height: 16),
+                itemCount: _mockExercises.length,
+                itemBuilder: (context, i) => _ExerciseCard(
+                  exercise: _mockExercises[i],
+                  onTap: () => context.go('/exercises/${_mockExercises[i].id}'),
+                ).animate().fadeIn(duration: 500.ms, delay: (i * 80).ms).slideY(begin: 0.1, end: 0),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -112,60 +115,56 @@ class _ExerciseCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
-    return GestureDetector(
+    return GlowCard(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
-          ),
-        ),
-        child: Row(
-          children: [
-            // Placeholder animazione (sarà Rive)
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.darkSurfaceHigh : AppColors.lightSurfaceHigh,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.fitness_center, color: AppColors.accent),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(exercise.name, style: theme.textTheme.headlineSmall),
-                  const SizedBox(height: 4),
-                  Text(
-                    exercise.muscles.join(' · '),
-                    style: theme.textTheme.bodySmall,
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      _CategoryChip(label: exercise.category),
-                      const SizedBox(width: 8),
-                      _DifficultyDots(level: exercise.difficulty),
-                    ],
-                  ),
+      child: Row(
+        children: [
+          // Placeholder animazione (sarà Rive)
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.accent.withValues(alpha: 0.15),
+                  AppColors.accentAlt.withValues(alpha: 0.08),
                 ],
               ),
+              borderRadius: BorderRadius.circular(12),
             ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 14,
-              color: isDark ? AppColors.darkTextTertiary : AppColors.lightTextTertiary,
+            child: const Icon(Icons.fitness_center, color: AppColors.accent),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(exercise.name, style: theme.textTheme.headlineSmall),
+                const SizedBox(height: 4),
+                Text(
+                  exercise.muscles.join(' · '),
+                  style: theme.textTheme.bodySmall,
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    _CategoryChip(label: exercise.category),
+                    const SizedBox(width: 8),
+                    _DifficultyDots(level: exercise.difficulty),
+                  ],
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          const Icon(
+            Icons.arrow_forward_ios,
+            size: 14,
+            color: AppColors.darkTextTertiary,
+          ),
+        ],
       ),
     );
   }
@@ -177,12 +176,14 @@ class _CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.accentTintDark : AppColors.accentTintLight,
+        color: AppColors.glassSurface,
         borderRadius: BorderRadius.circular(4),
+        border: Border.all(
+          color: AppColors.accent.withValues(alpha: 0.4),
+        ),
       ),
       child: Text(
         label,
@@ -204,7 +205,6 @@ class _DifficultyDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: List.generate(3, (i) {
         final active = i < level;
@@ -216,9 +216,15 @@ class _DifficultyDots extends StatelessWidget {
             shape: BoxShape.circle,
             color: active
                 ? AppColors.accent
-                : isDark
-                    ? AppColors.darkSurfaceHigh
-                    : AppColors.lightSurfaceHigh,
+                : AppColors.darkSurfaceHigh,
+            boxShadow: active
+                ? [
+                    BoxShadow(
+                      color: AppColors.accent.withValues(alpha: 0.4),
+                      blurRadius: 4,
+                    ),
+                  ]
+                : null,
           ),
         );
       }),

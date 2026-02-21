@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_widgets.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -7,7 +9,6 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
       appBar: AppBar(
@@ -19,118 +20,137 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // Avatar + nome
-          Center(
-            child: Column(
+      body: ScaffoldGradientBackground(
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            // Avatar + nome
+            Center(
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const SweepGradient(
+                        colors: [
+                          AppColors.accent,
+                          AppColors.accentAlt,
+                          AppColors.accent,
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.accent.withValues(alpha: 0.4),
+                          blurRadius: 24,
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(3),
+                    child: const CircleAvatar(
+                      radius: 44,
+                      backgroundColor: AppColors.darkSurface,
+                      child: Icon(Icons.person, size: 44, color: AppColors.accent),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text('Marco Rossi', style: theme.textTheme.headlineMedium),
+                  Text('marco.rossi@email.com', style: theme.textTheme.bodySmall),
+                ],
+              ),
+            ).animate().fadeIn(duration: 500.ms).slideY(begin: -0.1, end: 0),
+
+            const SizedBox(height: 24),
+
+            // Stats
+            Row(
               children: [
-                CircleAvatar(
-                  radius: 44,
-                  backgroundColor: isDark ? AppColors.darkSurface : AppColors.lightSurface,
-                  child: const Icon(Icons.person, size: 44, color: AppColors.accent),
-                ),
-                const SizedBox(height: 12),
-                Text('Marco Rossi', style: theme.textTheme.headlineMedium),
-                Text('marco.rossi@email.com', style: theme.textTheme.bodySmall),
+                Expanded(child: _StatCard(value: '24', label: 'Sessioni')),
+                const SizedBox(width: 16),
+                Expanded(child: _StatCard(value: '8', label: 'Settimane')),
+                const SizedBox(width: 16),
+                Expanded(child: _StatCard(value: '5', label: 'Streak')),
               ],
-            ),
-          ),
+            ).animate().fadeIn(duration: 500.ms, delay: 150.ms).slideY(begin: 0.1, end: 0),
 
-          const SizedBox(height: 24),
+            const SizedBox(height: 24),
 
-          // Stats
-          Row(
-            children: [
-              Expanded(child: _StatCard(value: '24', label: 'Sessioni', isDark: isDark)),
-              const SizedBox(width: 12),
-              Expanded(child: _StatCard(value: '8', label: 'Settimane', isDark: isDark)),
-              const SizedBox(width: 12),
-              Expanded(child: _StatCard(value: '5', label: 'Streak', isDark: isDark)),
-            ],
-          ),
+            // Menu items
+            _MenuSection(
+              title: 'ACCOUNT',
+              items: [
+                _MenuItem(icon: Icons.person_outline, label: 'Modifica profilo', onTap: () {}),
+                _MenuItem(icon: Icons.lock_outline, label: 'Cambia password', onTap: () {}),
+                _MenuItem(icon: Icons.notifications_outlined, label: 'Notifiche', onTap: () {}),
+              ],
+              theme: theme,
+            ).animate().fadeIn(duration: 500.ms, delay: 300.ms),
 
-          const SizedBox(height: 24),
+            const SizedBox(height: 16),
 
-          // Menu items
-          _MenuSection(
-            title: 'ACCOUNT',
-            items: [
-              _MenuItem(icon: Icons.person_outline, label: 'Modifica profilo', onTap: () {}),
-              _MenuItem(icon: Icons.lock_outline, label: 'Cambia password', onTap: () {}),
-              _MenuItem(icon: Icons.notifications_outlined, label: 'Notifiche', onTap: () {}),
-            ],
-            isDark: isDark,
-            theme: theme,
-          ),
+            _MenuSection(
+              title: 'ATTIVITÀ',
+              items: [
+                _MenuItem(icon: Icons.history, label: 'Storico allenamenti', onTap: () {}),
+                _MenuItem(icon: Icons.bar_chart_outlined, label: 'Statistiche', onTap: () {}),
+                _MenuItem(icon: Icons.calendar_month_outlined, label: 'Le mie prenotazioni', onTap: () {}),
+              ],
+              theme: theme,
+            ).animate().fadeIn(duration: 500.ms, delay: 400.ms),
 
-          const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-          _MenuSection(
-            title: 'ATTIVITÀ',
-            items: [
-              _MenuItem(icon: Icons.history, label: 'Storico allenamenti', onTap: () {}),
-              _MenuItem(icon: Icons.bar_chart_outlined, label: 'Statistiche', onTap: () {}),
-              _MenuItem(icon: Icons.calendar_month_outlined, label: 'Le mie prenotazioni', onTap: () {}),
-            ],
-            isDark: isDark,
-            theme: theme,
-          ),
+            _MenuSection(
+              title: 'APP',
+              items: [
+                _MenuItem(icon: Icons.help_outline, label: 'Supporto', onTap: () {}),
+              ],
+              theme: theme,
+            ).animate().fadeIn(duration: 500.ms, delay: 500.ms),
 
-          const SizedBox(height: 16),
+            const SizedBox(height: 24),
 
-          _MenuSection(
-            title: 'APP',
-            items: [
-              _MenuItem(icon: Icons.dark_mode_outlined, label: 'Tema', onTap: () {}),
-              _MenuItem(icon: Icons.help_outline, label: 'Supporto', onTap: () {}),
-            ],
-            isDark: isDark,
-            theme: theme,
-          ),
+            // Logout
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton(
+                onPressed: () {}, // TODO: logout
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.error,
+                  side: const BorderSide(color: AppColors.error),
+                ),
+                child: const Text('ESCI'),
+              ),
+            ).animate().fadeIn(duration: 500.ms, delay: 600.ms),
 
-          const SizedBox(height: 24),
-
-          // Logout
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton(
-              onPressed: () {}, // TODO: logout
-              child: const Text('ESCI'),
-            ),
-          ),
-
-          const SizedBox(height: 32),
-        ],
+            const SizedBox(height: 96), // space for floating nav
+          ],
+        ),
       ),
     );
   }
 }
 
 class _StatCard extends StatelessWidget {
-  const _StatCard({required this.value, required this.label, required this.isDark});
+  const _StatCard({required this.value, required this.label});
   final String value, label;
-  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
+    return GlowCard(
       padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
-        ),
-      ),
       child: Column(
         children: [
           Text(
             value,
             style: theme.textTheme.headlineLarge?.copyWith(
               color: AppColors.accent,
+              shadows: [
+                Shadow(
+                  color: AppColors.accent.withValues(alpha: 0.4),
+                  blurRadius: 12,
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 2),
@@ -145,12 +165,10 @@ class _MenuSection extends StatelessWidget {
   const _MenuSection({
     required this.title,
     required this.items,
-    required this.isDark,
     required this.theme,
   });
   final String title;
   final List<_MenuItem> items;
-  final bool isDark;
   final ThemeData theme;
 
   @override
@@ -168,11 +186,9 @@ class _MenuSection extends StatelessWidget {
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: isDark ? AppColors.darkSurface : AppColors.lightSurface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
-            ),
+            color: AppColors.glassSurface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.glassBorderSubtle, width: 0.5),
           ),
           child: Column(
             children: items.asMap().entries.map((entry) {
@@ -183,22 +199,20 @@ class _MenuSection extends StatelessWidget {
                   ListTile(
                     leading: Icon(item.icon, color: AppColors.accent, size: 22),
                     title: Text(item.label, style: theme.textTheme.bodyLarge),
-                    trailing: Icon(
+                    trailing: const Icon(
                       Icons.arrow_forward_ios,
                       size: 14,
-                      color: isDark
-                          ? AppColors.darkTextTertiary
-                          : AppColors.lightTextTertiary,
+                      color: AppColors.darkTextTertiary,
                     ),
                     onTap: item.onTap,
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 4),
+                        horizontal: 16, vertical: 8),
                   ),
                   if (i < items.length - 1)
-                    Divider(
+                    const Divider(
                       height: 1,
                       indent: 52,
-                      color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
+                      color: AppColors.darkBorder,
                     ),
                 ],
               );

@@ -2,53 +2,54 @@ import 'package:flutter/material.dart';
 
 /// PAPP Design System — Color Palette
 ///
-/// Palette: Nero · Bianco · Grigio · Giallo-Arancio (#FF9500)
-/// Il giallo-arancio è l'UNICO accento cromatico dell'app.
+/// Dark Premium + Lime Green Accent #83F52C
+/// Glassmorphism tokens per effetti frosted glass
 abstract class AppColors {
   // ---------------------------------------------------------------------------
-  // ACCENT — Giallo-Arancio (unico colore di brand)
+  // ACCENT — Lime Green (colore di brand)
   // ---------------------------------------------------------------------------
-  static const Color accent = Color(0xFFFF9500);
-  static const Color accentDark = Color(0xFFCC7700);  // pressed / hover light
-  static const Color accentLight = Color(0xFFFFB84D); // pressed / hover dark
-  static const Color accentTintLight = Color(0xFFFFF3E0); // sfondo tint su light
-  static const Color accentTintDark = Color(0xFF2A1F00);  // sfondo tint su dark
+  static const Color accent = Color(0xFF83F52C);
+  static const Color accentAlt = Color(0xFFC8FF3E); // lime chiaro per gradienti
+  static const List<Color> accentGradient = [accent, accentAlt];
+  static const Color accentDark = Color(0xFF66C420);  // pressed / hover
+  static const Color accentLight = Color(0xFFB4F87A); // highlight
+  static const Color accentTintDark = Color(0xFF1A2800);  // sfondo tint su dark
 
   // ---------------------------------------------------------------------------
-  // LIGHT THEME
+  // GLASSMORPHISM
   // ---------------------------------------------------------------------------
-  static const Color lightBackground = Color(0xFFFFFFFF);
-  static const Color lightSurface = Color(0xFFF2F2F2);
-  static const Color lightSurfaceHigh = Color(0xFFE5E5E5);
-
-  static const Color lightTextPrimary = Color(0xFF0A0A0A);
-  static const Color lightTextSecondary = Color(0xFF4A4A4A);
-  static const Color lightTextTertiary = Color(0xFF8A8A8A);
-  static const Color lightTextDisabled = Color(0xFFB5B5B5);
-
-  static const Color lightBorder = Color(0xFFD4D4D4);
-  static const Color lightBorderEmphasis = Color(0xFF8A8A8A);
+  static const Color glassSurface = Color(0x14FFFFFF);       // white 8%
+  static const Color glassSurfaceHigh = Color(0x1FFFFFFF);   // white 12%
+  static const Color glassBorder = Color(0x33FFFFFF);        // white 20%
+  static const Color glassBorderSubtle = Color(0x1AFFFFFF);  // white 10%
 
   // ---------------------------------------------------------------------------
-  // DARK THEME
+  // DARK THEME (unico tema)
   // ---------------------------------------------------------------------------
   static const Color darkBackground = Color(0xFF0A0A0A);
   static const Color darkSurface = Color(0xFF141414);
-  static const Color darkSurfaceHigh = Color(0xFF1F1F1F);
+  static const Color darkSurfaceHigh = Color(0xFF1E1E1E);
+  static const Color darkSurfaceHigher = Color(0xFF252525);
 
   static const Color darkTextPrimary = Color(0xFFFFFFFF);
-  static const Color darkTextSecondary = Color(0xFFA3A3A3);
-  static const Color darkTextTertiary = Color(0xFF6B6B6B);
+  static const Color darkTextSecondary = Color(0xFFA0A0A0);
+  static const Color darkTextTertiary = Color(0xFF606060);
   static const Color darkTextDisabled = Color(0xFF3D3D3D);
 
   static const Color darkBorder = Color(0xFF2A2A2A);
   static const Color darkBorderEmphasis = Color(0xFF4A4A4A);
 
   // ---------------------------------------------------------------------------
-  // SHARED (non cambiano tra temi)
+  // SEMANTIC
+  // ---------------------------------------------------------------------------
+  static const Color error = Color(0xFFFF4D4D);
+  static const Color warning = Color(0xFFFFB800);
+
+  // ---------------------------------------------------------------------------
+  // SHARED
   // ---------------------------------------------------------------------------
   static const Color transparent = Colors.transparent;
 
-  /// Testo che va SOPRA all'accent (#FF9500) — sempre nero per contrasto WCAG AA
+  /// Testo che va SOPRA all'accent — nero per contrasto
   static const Color textOnAccent = Color(0xFF0A0A0A);
 }

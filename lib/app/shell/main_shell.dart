@@ -1,10 +1,10 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_colors.dart';
 import '../router.dart';
 
-/// Shell principale con bottom navigation bar.
-/// Wrappa tutto il contenuto delle schermate autenticate.
+/// Shell principale con floating frosted glass bottom navigation bar.
 class MainShell extends StatelessWidget {
   const MainShell({super.key, required this.child});
 
@@ -28,31 +28,48 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentIndex = _currentIndex(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      extendBody: true,
       body: child,
       bottomNavigationBar: Container(
+        margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: isDark ? AppColors.darkBorder : AppColors.lightBorder,
-              width: 1,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: AppColors.glassBorder,
+            width: 0.5,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.4),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              color: AppColors.glassSurfaceHigh,
+              child: NavigationBar(
+                selectedIndex: currentIndex,
+                onDestinationSelected: (index) {
+                  context.go(_tabs[index].route);
+                },
+                height: 64,
+                destinations: _tabs.map((tab) {
+                  return NavigationDestination(
+                    icon: Icon(tab.icon),
+                    selectedIcon: Icon(tab.activeIcon),
+                    label: tab.label,
+                  );
+                }).toList(),
+              ),
             ),
           ),
-        ),
-        child: NavigationBar(
-          selectedIndex: currentIndex,
-          onDestinationSelected: (index) {
-            context.go(_tabs[index].route);
-          },
-          destinations: _tabs.map((tab) {
-            return NavigationDestination(
-              icon: Icon(tab.icon),
-              selectedIcon: Icon(tab.activeIcon),
-              label: tab.label,
-            );
-          }).toList(),
         ),
       ),
     );

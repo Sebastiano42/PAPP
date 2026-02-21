@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_widgets.dart';
 import '../../../../app/router.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -38,126 +40,123 @@ class _LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 48),
+      body: ScaffoldGradientBackground(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 48),
 
-                // Logo / Brand
-                Text(
-                  'PAPP',
-                  style: theme.textTheme.displayLarge?.copyWith(
-                    color: AppColors.accent,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'IL TUO ALLENAMENTO\nINIZIA QUI.',
-                  style: theme.textTheme.headlineLarge,
-                ),
+                  // Logo / Brand
+                  Text(
+                    'PAPP',
+                    style: theme.textTheme.displayLarge?.copyWith(
+                      color: AppColors.accent,
+                      shadows: [
+                        Shadow(
+                          color: AppColors.accent.withValues(alpha: 0.5),
+                          blurRadius: 24,
+                        ),
+                      ],
+                    ),
+                  ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0),
+                  const SizedBox(height: 8),
+                  Text(
+                    'IL TUO ALLENAMENTO\nINIZIA QUI.',
+                    style: theme.textTheme.headlineLarge,
+                  ).animate().fadeIn(duration: 600.ms, delay: 200.ms).slideY(begin: 0.2, end: 0),
 
-                const SizedBox(height: 48),
+                  const SizedBox(height: 48),
 
-                // Email
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                    prefixIcon: Icon(Icons.mail_outline),
-                  ),
-                  validator: (v) {
-                    if (v == null || v.isEmpty) return 'Inserisci la tua email';
-                    if (!v.contains('@')) return 'Email non valida';
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
+                  // Email
+                  TextFormField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    textInputAction: TextInputAction.next,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      prefixIcon: Icon(Icons.mail_outline),
+                    ),
+                    validator: (v) {
+                      if (v == null || v.isEmpty) return 'Inserisci la tua email';
+                      if (!v.contains('@')) return 'Email non valida';
+                      return null;
+                    },
+                  ).animate().fadeIn(duration: 500.ms, delay: 400.ms).slideY(begin: 0.2, end: 0),
+                  const SizedBox(height: 16),
 
-                // Password
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  textInputAction: TextInputAction.done,
-                  onFieldSubmitted: (_) => _login(),
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: const Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_outline
-                            : Icons.visibility_off_outline,
+                  // Password
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) => _login(),
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      prefixIcon: const Icon(Icons.lock_outline),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () =>
+                            setState(() => _obscurePassword = !_obscurePassword),
                       ),
-                      onPressed: () =>
-                          setState(() => _obscurePassword = !_obscurePassword),
+                    ),
+                    validator: (v) {
+                      if (v == null || v.isEmpty) return 'Inserisci la password';
+                      if (v.length < 6) return 'Minimo 6 caratteri';
+                      return null;
+                    },
+                  ).animate().fadeIn(duration: 500.ms, delay: 500.ms).slideY(begin: 0.2, end: 0),
+
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {}, // TODO: forgot password
+                      child: const Text('Password dimenticata?'),
                     ),
                   ),
-                  validator: (v) {
-                    if (v == null || v.isEmpty) return 'Inserisci la password';
-                    if (v.length < 6) return 'Minimo 6 caratteri';
-                    return null;
-                  },
-                ),
 
-                const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {}, // TODO: forgot password
-                    child: const Text('Password dimenticata?'),
-                  ),
-                ),
+                  const SizedBox(height: 24),
 
-                const SizedBox(height: 24),
+                  // Login button
+                  GlowButton(
+                    label: 'ACCEDI',
+                    onPressed: _login,
+                    isLoading: _isLoading,
+                  ).animate().fadeIn(duration: 500.ms, delay: 600.ms).slideY(begin: 0.2, end: 0),
 
-                // Login button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _login,
-                    child: _isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppColors.textOnAccent,
-                            ),
-                          )
-                        : const Text('ACCEDI'),
-                  ),
-                ),
+                  const SizedBox(height: 16),
 
-                const SizedBox(height: 16),
-
-                // Register link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Non hai un account? ',
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                    GestureDetector(
-                      onTap: () => context.go(AppRoutes.register),
-                      child: Text(
-                        'Registrati',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.accent,
-                          fontWeight: FontWeight.w600,
+                  // Register link
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Non hai un account? ',
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      GestureDetector(
+                        onTap: () => context.go(AppRoutes.register),
+                        child: Text(
+                          'Registrati',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.accent,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ).animate().fadeIn(duration: 500.ms, delay: 700.ms),
+                ],
+              ),
             ),
           ),
         ),
