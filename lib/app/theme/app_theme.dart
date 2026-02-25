@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'app_colors.dart';
 import 'app_typography.dart';
 
-/// PAPP Design System — Theme
+/// HybridCrew Design System — Theme
 ///
-/// Dark-only premium theme con accent lime green #83F52C + glassmorphism.
+/// Dark-only, Ladder-inspired. Bold, high-contrast, yellow-lime accent #E2F163.
 abstract class AppTheme {
   // ---------------------------------------------------------------------------
   // DARK THEME (unico)
@@ -19,7 +19,7 @@ abstract class AppTheme {
         colorScheme: const ColorScheme.dark(
           primary: AppColors.accent,
           onPrimary: AppColors.textOnAccent,
-          secondary: AppColors.accentAlt,
+          secondary: AppColors.accentLight,
           onSecondary: AppColors.textOnAccent,
           surface: AppColors.darkBackground,
           onSurface: AppColors.darkTextPrimary,
@@ -39,10 +39,10 @@ abstract class AppTheme {
           centerTitle: false,
           titleTextStyle: TextStyle(
             fontFamily: AppTypography.fontFamily,
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
+            fontSize: 28,
+            fontWeight: FontWeight.w800,
             color: AppColors.darkTextPrimary,
-            letterSpacing: -0.3,
+            letterSpacing: -0.5,
           ),
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: AppColors.transparent,
@@ -51,28 +51,31 @@ abstract class AppTheme {
         ),
 
         navigationBarTheme: NavigationBarThemeData(
-          backgroundColor: Colors.transparent,
-          indicatorColor: AppColors.accentTintDark,
+          backgroundColor: AppColors.darkBackground,
+          indicatorColor: AppColors.transparent,
           iconTheme: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return const IconThemeData(color: AppColors.accent);
+              return const IconThemeData(color: AppColors.accent, size: 26);
             }
-            return const IconThemeData(color: AppColors.darkTextTertiary);
+            return IconThemeData(
+              color: AppColors.darkTextSecondary.withValues(alpha: 0.4),
+              size: 26,
+            );
           }),
           labelTextStyle: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
               return const TextStyle(
                 fontFamily: AppTypography.fontFamily,
-                fontSize: 12,
+                fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: AppColors.accent,
               );
             }
-            return const TextStyle(
+            return TextStyle(
               fontFamily: AppTypography.fontFamily,
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: AppColors.darkTextTertiary,
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+              color: AppColors.darkTextSecondary.withValues(alpha: 0.4),
             );
           }),
           elevation: 0,
@@ -80,7 +83,7 @@ abstract class AppTheme {
         ),
 
         cardTheme: CardTheme(
-          color: AppColors.darkSurface,
+          color: AppColors.darkSurfaceHigh,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -93,19 +96,15 @@ abstract class AppTheme {
             backgroundColor: AppColors.accent,
             foregroundColor: AppColors.textOnAccent,
             elevation: 0,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
             ),
             textStyle: const TextStyle(
               fontFamily: AppTypography.fontFamily,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
-            ),
-          ).copyWith(
-            shadowColor: WidgetStatePropertyAll(
-              AppColors.accent.withValues(alpha: 0.4),
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.0,
             ),
           ),
         ),
@@ -116,23 +115,23 @@ abstract class AppTheme {
             side: const BorderSide(color: AppColors.darkBorder),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(14),
             ),
             textStyle: const TextStyle(
               fontFamily: AppTypography.fontFamily,
               fontSize: 15,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),
 
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-            foregroundColor: AppColors.darkTextSecondary,
+            foregroundColor: AppColors.accent,
             textStyle: const TextStyle(
               fontFamily: AppTypography.fontFamily,
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ),
@@ -141,27 +140,31 @@ abstract class AppTheme {
           filled: true,
           fillColor: AppColors.darkSurface,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
             borderSide: const BorderSide(color: AppColors.darkBorder),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
             borderSide: const BorderSide(color: AppColors.darkBorder),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: AppColors.accent, width: 2),
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: AppColors.accent, width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
             borderSide: const BorderSide(color: AppColors.error),
           ),
           hintStyle: const TextStyle(
             fontFamily: AppTypography.fontFamily,
-            color: AppColors.darkTextDisabled,
+            color: AppColors.darkTextSecondary,
+          ),
+          labelStyle: const TextStyle(
+            fontFamily: AppTypography.fontFamily,
+            color: AppColors.darkTextSecondary,
           ),
           contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         ),
 
         dividerTheme: const DividerThemeData(
@@ -172,7 +175,7 @@ abstract class AppTheme {
 
         progressIndicatorTheme: const ProgressIndicatorThemeData(
           color: AppColors.accent,
-          linearTrackColor: AppColors.darkSurfaceHigh,
+          linearTrackColor: AppColors.darkSurfaceHigher,
         ),
       );
 }

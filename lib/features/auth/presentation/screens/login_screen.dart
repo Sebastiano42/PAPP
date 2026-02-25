@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_typography.dart';
 import '../../../../app/theme/app_widgets.dart';
 import '../../../../app/router.dart';
 
@@ -37,56 +38,79 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
-      body: ScaffoldGradientBackground(
-        child: SafeArea(
+      body: SafeArea(
+        child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.symmetric(horizontal: 32),
             child: Form(
               key: _formKey,
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 48),
-
                   // Logo / Brand
-                  Text(
-                    'PAPP',
-                    style: theme.textTheme.displayLarge?.copyWith(
-                      color: AppColors.accent,
-                      shadows: [
-                        Shadow(
-                          color: AppColors.accent.withValues(alpha: 0.5),
-                          blurRadius: 24,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'H',
+                        style: TextStyle(
+                          fontFamily: AppTypography.fontFamily,
+                          fontSize: 36,
+                          fontWeight: FontWeight.w900,
+                          color: AppColors.accent,
                         ),
-                      ],
-                    ),
-                  ).animate().fadeIn(duration: 600.ms).slideY(begin: -0.2, end: 0),
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'HYBRIDCREW',
+                        style: TextStyle(
+                          fontFamily: AppTypography.fontFamily,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.0,
+                          color: AppColors.darkTextPrimary,
+                        ),
+                      ),
+                    ],
+                  ).animate().fadeIn(duration: 600.ms),
                   const SizedBox(height: 8),
                   Text(
-                    'IL TUO ALLENAMENTO\nINIZIA QUI.',
-                    style: theme.textTheme.headlineLarge,
-                  ).animate().fadeIn(duration: 600.ms, delay: 200.ms).slideY(begin: 0.2, end: 0),
+                    'Train with purpose.',
+                    style: TextStyle(
+                      fontFamily: AppTypography.fontFamily,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.darkTextSecondary,
+                    ),
+                  ).animate().fadeIn(duration: 600.ms, delay: 200.ms),
 
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 40),
 
                   // Email
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
+                    style: const TextStyle(
+                      fontFamily: AppTypography.fontFamily,
+                      color: AppColors.darkTextPrimary,
+                      fontSize: 16,
+                    ),
                     decoration: const InputDecoration(
-                      labelText: 'Email',
-                      prefixIcon: Icon(Icons.mail_outline),
+                      hintText: 'Email',
+                      prefixIcon: Icon(
+                        Icons.mail_outline,
+                        color: AppColors.darkTextSecondary,
+                        size: 20,
+                      ),
                     ),
                     validator: (v) {
                       if (v == null || v.isEmpty) return 'Inserisci la tua email';
                       if (!v.contains('@')) return 'Email non valida';
                       return null;
                     },
-                  ).animate().fadeIn(duration: 500.ms, delay: 400.ms).slideY(begin: 0.2, end: 0),
+                  ).animate().fadeIn(duration: 500.ms, delay: 400.ms),
                   const SizedBox(height: 16),
 
                   // Password
@@ -95,14 +119,25 @@ class _LoginScreenState extends State<LoginScreen> {
                     obscureText: _obscurePassword,
                     textInputAction: TextInputAction.done,
                     onFieldSubmitted: (_) => _login(),
+                    style: const TextStyle(
+                      fontFamily: AppTypography.fontFamily,
+                      color: AppColors.darkTextPrimary,
+                      fontSize: 16,
+                    ),
                     decoration: InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: const Icon(Icons.lock_outline),
+                      hintText: 'Password',
+                      prefixIcon: const Icon(
+                        Icons.lock_outline,
+                        color: AppColors.darkTextSecondary,
+                        size: 20,
+                      ),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword
-                              ? Icons.visibility
-                              : Icons.visibility_off,
+                              ? Icons.visibility_off
+                              : Icons.visibility,
+                          color: AppColors.darkTextSecondary,
+                          size: 20,
                         ),
                         onPressed: () =>
                             setState(() => _obscurePassword = !_obscurePassword),
@@ -113,27 +148,34 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (v.length < 6) return 'Minimo 6 caratteri';
                       return null;
                     },
-                  ).animate().fadeIn(duration: 500.ms, delay: 500.ms).slideY(begin: 0.2, end: 0),
+                  ).animate().fadeIn(duration: 500.ms, delay: 500.ms),
 
                   const SizedBox(height: 8),
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
                       onPressed: () {}, // TODO: forgot password
-                      child: const Text('Password dimenticata?'),
+                      child: Text(
+                        'Password dimenticata?',
+                        style: TextStyle(
+                          fontFamily: AppTypography.fontFamily,
+                          fontSize: 14,
+                          color: AppColors.darkTextSecondary,
+                        ),
+                      ),
                     ),
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
 
                   // Login button
-                  GlowButton(
+                  PrimaryButton(
                     label: 'ACCEDI',
                     onPressed: _login,
                     isLoading: _isLoading,
-                  ).animate().fadeIn(duration: 500.ms, delay: 600.ms).slideY(begin: 0.2, end: 0),
+                  ).animate().fadeIn(duration: 500.ms, delay: 600.ms),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 32),
 
                   // Register link
                   Row(
@@ -141,15 +183,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Text(
                         'Non hai un account? ',
-                        style: theme.textTheme.bodyMedium,
+                        style: TextStyle(
+                          fontFamily: AppTypography.fontFamily,
+                          fontSize: 14,
+                          color: AppColors.darkTextSecondary,
+                        ),
                       ),
                       GestureDetector(
                         onTap: () => context.go(AppRoutes.register),
-                        child: Text(
+                        child: const Text(
                           'Registrati',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: AppColors.accent,
+                          style: TextStyle(
+                            fontFamily: AppTypography.fontFamily,
+                            fontSize: 14,
                             fontWeight: FontWeight.w600,
+                            color: AppColors.darkTextPrimary,
                           ),
                         ),
                       ),

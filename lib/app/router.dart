@@ -5,10 +5,13 @@ import '../features/auth/presentation/screens/login_screen.dart';
 import '../features/auth/presentation/screens/register_screen.dart';
 import '../features/sessions/presentation/screens/sessions_screen.dart';
 import '../features/sessions/presentation/screens/session_detail_screen.dart';
-import '../features/exercises/presentation/screens/exercises_screen.dart';
 import '../features/exercises/presentation/screens/exercise_detail_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/program/presentation/screens/program_screen.dart';
+import '../features/progress/presentation/screens/progress_screen.dart';
+import '../features/timer/presentation/screens/timer_home_screen.dart';
+import '../features/timer/presentation/screens/active_timer_screen.dart';
+import '../features/timer/presentation/screens/create_timer_screen.dart';
 import 'shell/main_shell.dart';
 
 // Route names — usare sempre le costanti per evitare typo
@@ -22,6 +25,10 @@ abstract class AppRoutes {
   static const exerciseDetail = '/exercises/:id';
   static const profile = '/profile';
   static const program = '/program';
+  static const progress = '/progress';
+  static const timer = '/timer';
+  static const activeTimer = '/timer/active';
+  static const createTimer = '/timer/create';
 }
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -44,6 +51,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.register,
         name: 'register',
         builder: (context, state) => const RegisterScreen(),
+      ),
+
+      // Active timer — fullscreen, fuori dalla shell (senza bottom nav)
+      GoRoute(
+        path: AppRoutes.activeTimer,
+        name: 'active-timer',
+        builder: (context, state) => const ActiveTimerScreen(),
       ),
 
       // App routes (con bottom navigation shell)
@@ -70,18 +84,26 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
           GoRoute(
-            path: AppRoutes.exercises,
-            name: 'exercises',
-            builder: (context, state) => const ExercisesScreen(),
-            routes: [
-              GoRoute(
-                path: ':id',
-                name: 'exercise-detail',
-                builder: (context, state) => ExerciseDetailScreen(
-                  exerciseId: state.pathParameters['id']!,
-                ),
-              ),
-            ],
+            path: AppRoutes.timer,
+            name: 'timer',
+            builder: (context, state) => const TimerHomeScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.createTimer,
+            name: 'create-timer',
+            builder: (context, state) => const CreateTimerScreen(),
+          ),
+          GoRoute(
+            path: AppRoutes.exerciseDetail,
+            name: 'exercise-detail',
+            builder: (context, state) => ExerciseDetailScreen(
+              exerciseId: state.pathParameters['id']!,
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.progress,
+            name: 'progress',
+            builder: (context, state) => const ProgressScreen(),
           ),
           GoRoute(
             path: AppRoutes.profile,
